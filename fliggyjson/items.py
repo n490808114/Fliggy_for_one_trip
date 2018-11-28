@@ -11,4 +11,7 @@ import scrapy
 class FliggyjsonItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    depcity = scrapy.Field()
+    arrcity = scrapy.Field()
+    depdate = scrapy.Field()
+    price = scrapy.Field()
