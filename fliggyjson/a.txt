@@ -1,0 +1,7 @@
+ttps://sijipiao.fliggy.com/ie/flight_search_result_poller.do?_ksTS=1543470153276_758
+&callback=jsonp759
+&supportMultiTrip=true
+&searchBy=1281
+&childPassengerNum=0
+&infantPassengerNum=0
+&searchJourney=[{"depCityCode":"CTU","arrCityCode":"ZRH","depCityName":"%E6%88%90%E9%83%BD","arrCityName":"%E8%8B%8F%E9%BB%8E%E4%B8%96","depDate":"2018-12-12","selectedFlights":[]}]&tripType=1&searchCabinType=0&agentId=-1&controller=1&searchMode=0&b2g=0&formNo=-1&cardId=&needMemberPrice=

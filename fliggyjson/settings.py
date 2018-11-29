@@ -40,9 +40,12 @@ ROBOTSTXT_OBEY = False
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
-   'Accept': '*/*',
-   'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
-   'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0',
+    #'Accept': '*/*',
+    'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
+    'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0',
+    #'accept-language':'zh-CN,zh;q=0.9',
+    #refer':'https://sijipiao.fliggy.com/ie/flight_search_result.htm?searchBy=1281&b2g=0&formNo=-1&agentId=-1&needMemberPrice=true&searchJourney=%5B%7B%22depCityCode%22%3A%22CGO%22%2C%22arrCityCode%22%3A%22MEL%22%2C%22depCityName%22%3A%22%25E9%2583%2591%25E5%25B7%259E%22%2C%22arrCityName%22%3A%22%25E5%25A2%25A8%25E5%25B0%2594%25E6%259C%25AC%22%2C%22depDate%22%3A%222018-12-12%22%7D%5D&childPassengerNum=0&infantPassengerNum=0&tripType=0&cardId=',
+    #'accept-encoding':'gzip, deflate, br',
 }
 
 # Enable or disable spider middlewares
