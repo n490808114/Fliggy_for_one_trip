@@ -1,15 +1,16 @@
 import scrapy
-import time
-import re
-import datetime
-import codecs
-import json
-import sys
-import urllib
+import time  # time.sleep()
+import re  # re.search()
+import datetime  # 日期遍历
+import codecs  # 存储response
+import sys  # 重大错误退出
 from ..items import FliggyjsonItem
 from scrapy import Request
 from scrapy import Selector
-from scrapy.http.cookies import CookieJar
+
+#getcookie()
+from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
 
 
 class Fliggyjsonspider(scrapy.Spider):
@@ -37,7 +38,7 @@ class Fliggyjsonspider(scrapy.Spider):
         # 处理网址ksTS和callback部分
         tt = str(time.time()*1000)
         a, b, c = (tt.split(".")[0], tt.split(".")[1],
-                   str(eval(tt.split(".")[1]+'+1')))
+                    str(round(eval(tt+'%1'),4)+0.0001).split(".")[1])
 
         # 处理网址searchJourney部分
         searchJourney = [{
@@ -56,29 +57,32 @@ class Fliggyjsonspider(scrapy.Spider):
         start_urls.append(start_url)
     print(start_urls)
 
-    # 初始化CookieJar
-    cookie_jar = CookieJar()
     # 在url里面拿出来一个网址做登录测试
-    test_url = start_url.pop(0)
-    response_test = Request(test_url, headers=header)
 
+    
+    test_url = start_urls.pop(0)
+    response_test = Request(test_url, headers=header)
+    cookies = {}
     # 如果得到的响应网址是login网址，那么就登录登录到网站上，获取cookie
     # 并用cookie再次获取响应，再次测试
     # 同时把cookie传给start_request()函数
-    if "login" in response_test.url:
-        check_login(login())
-        start_url.append(test_url)
+    if bytes("login",encoding='utf-8') in response_test.body:
+        cookies = getCookies()
     else:
-        parse(response_test)
+        print("不用获取Cookies")
+        start_urls.append(test_url)
+
+        
 
     # 替换DEFAULT_REQUEST_HEADERS
     def start_requests(self):
+
         for url in self.start_urls:
             yield Request(url,
-                          headers=self.header,
-                          cookies=self.cookie_jar,
-                          callback=self.parse,
-                          )
+                            headers=self.header,
+                            cookies=self.cookies,
+                            callback=self.parse,
+                            )
 
     def parse(self, response):
         items = []
@@ -99,7 +103,7 @@ class Fliggyjsonspider(scrapy.Spider):
         # 抓数据
         for i in range(10):
             print(site["data"]["flightItems"][i]
-                  ["flightInfo"][0]["depAirlineCode"])
+                    ["flightInfo"][0]["depAirlineCode"])
             if site["data"]["flightItems"][i]["flightInfo"][0]["depAirlineCode"] == 'JQ':
                 item["depcity"] = site["data"]["flightItems"][i]["flightInfo"][0]["flightSegments"][0]["depCityCode"]
                 item["arrcity"] = site["data"]["flightItems"][i]["flightInfo"][0]["flightSegments"][0]["arrCityCode"]
@@ -111,28 +115,62 @@ class Fliggyjsonspider(scrapy.Spider):
         print(item)
         items.append(item)
 
-    # 登录动作
-    def login(self):
-        login_url = 'https://login.taobao.com/member/login.jhtml'
-        login_header = ''
-        login_post_data = urllib.parse.urlencode({
-            'username': '490808114@qq.com',
-            'password': 'Zzz8801668',
-            # 'username': (str(input("Please input your taobao Username"))),
-            # 'password': (str(input("Please input your taobao Password"))),
-        })
-        return scrapy.FormRequest(
-            url=login_url,
-            method='POST',
-            headers=login_header,
-            formdate=login_post_data,
-            callback=self.check_login,
+    def getCookies(self):
+        # chrome_options = Options()
+        # chrome_options.add_argument("--headless")
+        driver = webdriver.Chrome(
+            executable_path=r"C:\Program Files (x86)\Google\Chrome\Application\chromedriver",
         )
-    # 检查登录登录是否成功
 
-    def check_login(self, response):
-        if True:
-            self.cookie_jar.extract_cookies(response, response.Request)
-            with open('cookies.txt', 'w') as f:
-                for cookie in self.cookie_jar:
-                    f.write(str(cookie) + '\n')
+        time.sleep(3)
+        driver.get('https://login.taobao.com/member/login.jhtml')
+        time.sleep(3)
+        driver.find_element_by_class_name('login-switch').click()
+        # driver.find_element_by_xpath(
+        #    '//*[@id="J_QRCodeLogin"]/div[5]/a[1]').click()
+
+        time.sleep(3)
+        driver.find_element_by_xpath(
+            '//*[@id="TPL_username_1"]').send_keys('490808114@qq.com')
+        driver.find_element_by_xpath(
+            '//*[@id="TPL_password_1"]').send_keys('Zzz8801668')
+
+        move_button = driver.find_element_by_xpath('//*[@id="nc_1_n1t"]')
+
+        # 初始化AtionChains()
+        action = ActionChains(driver)
+        # 鼠标移动到元素上，点击并hold
+        action.move_to_element(move_button).click_and_hold().perform()
+        # 移动鼠标(260,0)
+        action.move_by_offset(300, 0).perform()
+        # 释放鼠标
+        action.release().perform()
+        time.sleep(0.5)
+
+        # action.click_and_hold(move_button).perform()
+        # action.drag_and_drop_by_offset(move_button,260,0).perform()
+        # 鼠标移动操作在测试环境中比较常用到的场景是需要获取某元素的 flyover/tips，
+        # 实际应用中很多 flyover 只有当鼠标移动到这个元素之后才出现，
+        # 所以这个时候通过执行 moveToElement(toElement) 操作，
+        # 就能达到预期的效果。但是根据我个人的经验，这个方法对于某些特定产品的图标，图像之类的 flyover/tips 也不起作用，
+        # 虽然在手动操作的时候移动鼠标到这些图标上面可以出现 flyover, 但是当使用 WebDriver 来模拟这一移动操作时，虽然方法成功执行了，
+        # 但是 flyover 却出不来。所以在实际应用中，还需要对具体的产品页面做相应的处理。
+
+        driver.find_element_by_xpath('//*[@id="J_SubmitStatic"]').click()
+
+        time.sleep(2)
+
+        cookie = {}
+        driver.get("https://i.taobao.com/my_taobao.htm")
+        if '我的' in driver.title:
+            for elem in driver.get_cookies():
+                cookie[elem['name']] = elem['value']
+            if len(cookie) > 0:
+                print("get Cookies Successful!!!")
+            else:
+                print("登陆失败")
+                sys.exit()
+        return cookie
+
+        driver.close()
+        driver.quit()
