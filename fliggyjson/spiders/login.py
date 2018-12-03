@@ -1,26 +1,21 @@
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 import time
-import os
-import logging
-from selenium.common.exceptions import UnexpectedAlertPresentException
-# from selenium.webdriver.chrome.options import Options
+import sys
 
 
 def getCookies():
     # chrome_options = Options()
     # chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(
-        executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver",
+        executable_path=r"C:\Program Files (x86)\Google\Chrome\Application\chromedriver",
     )
-
     time.sleep(3)
     driver.get('https://login.taobao.com/member/login.jhtml')
     time.sleep(3)
     driver.find_element_by_class_name('login-switch').click()
     # driver.find_element_by_xpath(
     #    '//*[@id="J_QRCodeLogin"]/div[5]/a[1]').click()
-
     time.sleep(3)
     driver.find_element_by_xpath(
         '//*[@id="TPL_username_1"]').send_keys('490808114@qq.com')
@@ -35,9 +30,11 @@ def getCookies():
     action.move_to_element(move_button).click_and_hold().perform()
     # 移动鼠标(260,0)
     action.move_by_offset(300, 0).perform()
+
+    time.sleep(1)
     # 释放鼠标
     action.release().perform()
-    time.sleep(0.5)
+    time.sleep(10)
 
     # action.click_and_hold(move_button).perform()
     # action.drag_and_drop_by_offset(move_button,260,0).perform()
@@ -51,22 +48,16 @@ def getCookies():
     driver.find_element_by_xpath('//*[@id="J_SubmitStatic"]').click()
 
     time.sleep(2)
-
-    cookie = {}
-    driver.get("https://i.taobao.com/my_taobao.htm")
-    if '我的' in driver.title:
-        for elem in driver.get_cookies():
-            cookie[elem['name']] = elem['value']
-        if len(cookie) >0:
-            print("get Cookies Successful!!!")
-        else:
-            print("登陆失败")
-    return cookie
     
+    cookies = {}
+    driver.get("https://i.taobao.com/my_taobao.htm")
+    for elem in driver.get_cookies():
+        cookies[elem['name']] = elem['value']
+    if len(cookies) > 0:
+        print("get Cookies Successful!!!")
+    else:
+        print("登陆失败")
+        sys.exit()
     driver.close()
     driver.quit()
-
-
-
-cookies = getCookies()
-print(cookies)
+    return cookies
