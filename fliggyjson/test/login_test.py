@@ -2,24 +2,31 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 import sys
-import os
 from browsermobproxy import Server
 
 def getCookies():
-
-    #无头浏览器
     # chrome_options = Options()
     # chrome_options.add_argument("--headless")
-    PROXY_PATH = ' '.join([os.getcwd])
 
-    driver = webdriver.Chrome()
-        #指定地址
+
+    print(sys.path[0]+'\browsermobproxy.bat')
+    server = Server(sys.path[0]+'\\browsermob-proxy')
+    server.start()
+    proxy = server.create_proxy()
+
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--proxy-server={0}".format(proxy.proxy))
+
+    driver = webdriver.Chrome(chrome_options=chrome_options)
         #executable_path=r"C:\Program Files (x86)\Google\Chrome\Application\chromedriver",
+
+    proxy.new_har("taobao")
+
     time.sleep(3)
     driver.get('https://login.taobao.com/member/login.jhtml')
-    time.sleep(3)
+    proxy.har
 
-    #切换到账号密码登录
+    time.sleep(3)
     #driver.find_element_by_class_name('login-switch').click()
     # driver.find_element_by_xpath(
     #    '//*[@id="J_QRCodeLogin"]/div[5]/a[1]').click()
@@ -50,6 +57,7 @@ def getCookies():
     #        action.move_by_offset(1, 0).perform()
     #        time.sleep(round(((round(i/300,4)**3)+round(i/150)),4))
     #    #action.move_by_offset(300, 0).perform()
+    #
     #    time.sleep(1)
     #    # 释放鼠标
     #    action.release().perform()
