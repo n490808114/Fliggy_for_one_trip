@@ -9,7 +9,7 @@ def getCookies():
     # chrome_options.add_argument("--headless")
     driver = webdriver.Chrome()
         #executable_path=r"C:\Program Files (x86)\Google\Chrome\Application\chromedriver",
-    driver.get()
+
     time.sleep(3)
     driver.get('https://login.taobao.com/member/login.jhtml')
     time.sleep(3)

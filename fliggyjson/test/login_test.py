@@ -31,12 +31,14 @@ def getCookies():
     # driver.find_element_by_xpath(
     #    '//*[@id="J_QRCodeLogin"]/div[5]/a[1]').click()
     #time.sleep(3)
+
+    #输入账号密码
     #driver.find_element_by_xpath(
     #    '//*[@id="TPL_username_1"]').send_keys('490808114@qq.com')
     #driver.find_element_by_xpath(
     #    '//*[@id="TPL_password_1"]').send_keys('Zzz8801668')
-    #
-    #
+
+    #滑块操作
     #move_button = driver.find_element_by_xpath('//*[@id="nc_1_n1t"]')
     #
     #try:
