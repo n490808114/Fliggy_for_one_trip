@@ -7,11 +7,12 @@
 
 import codecs
 import json
-import time
+import datetime
 
 class FliggyjsonPipeline(object):
     def __init__(self):
-        self.file = codecs.open(f'{int(time.time()*1000)}.json','wb',encoding='utf-8')
+        filename = str(datetime.datetime.now()).split('.')[0].replace(':','_')
+        self.file = codecs.open(f'{filename}.json','wb',encoding='utf-8')
     def process_item(self, item, spider):
         line = json.dumps(dict(item),ensure_ascii=False) + '\n'
         self.file.write(line)
