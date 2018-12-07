@@ -4,13 +4,12 @@ import re  # re.search()
 import datetime  # 日期遍历
 import codecs  # 存储response
 import sys  # 重大错误退出
-import urllib
-import random
+import urllib  # unicode strings to chinese
+import random # ksTS数字随机产生
 from ..items import FliggyjsonItem
 from scrapy import Request
 from scrapy import Selector
-from .login import getCookies
-
+# from .login import getCookies #暂时没有使用自动获取cookies
 
 class Fliggyjsonspider(scrapy.Spider):
     name = 'fliggyjson'
@@ -19,6 +18,7 @@ class Fliggyjsonspider(scrapy.Spider):
     # 接收起飞城市，抵达城市，开始日期，天数
     depCityCode = input("depCityCode?\n")
     arrCityCode = input("arrCityCode?\n")
+    airlineCode = input("airlineCode?\n")
     start_date = datetime.datetime.strptime(
         input("please input scrapy start date\n"), '%Y-%m-%d')
     times = int(input("how many days you want search?\n"))
@@ -57,7 +57,7 @@ class Fliggyjsonspider(scrapy.Spider):
         start_url = start_url0 + start_url1 + start_url2 + start_url3
         print(start_url)
         start_urls.append(start_url)
-    print(start_urls)
+    # print(start_urls)
 
     # 在url里面拿出来一个网址做登录测试
     cookies_list = str(input('Please input Cookies from internet!!!\n'))
@@ -101,25 +101,36 @@ class Fliggyjsonspider(scrapy.Spider):
         site = eval(site3)
 
         # 打印一下格式,检验
-        print(type(site))
+        # print(type(site))
 
         # 抓数据
         for i in range(len(site["data"]["flightItems"])):
-            #校验用
-            #print(site["data"]["flightItems"][i]
+            # 校验用
+            # print(site["data"]["flightItems"][i]
             #      ["flightInfo"][0]["airlineCodes"])
-            if site["data"]["flightItems"][i]["flightInfo"][0]["airlineCodes"] == ["JQ"]:
-                item["depcity"] = site["data"]["flightItems"][i]["flightInfo"][0]["flightSegments"][0]["depCityCode"]
-                item["arrcity"] = site["data"]["flightItems"][i]["flightInfo"][0]["flightSegments"][0]["arrCityCode"]
-                item["depdate"] = site["data"]["flightItems"][i]["flightInfo"][0]["flightSegments"][0]["depTimeStr"].split(" ")[
-                    0]
-                item["price"] = site["data"]["flightItems"][i]["cardTotalPrice"]
-                print(item)
-                break
+            if site["data"]["flightItems"][i]["flightInfo"][0]["airlineCodes"] == [self.airlineCode]:
+                item["depcity"] = re.search(
+                    r"depCityCode':%20'(\w{3})'", response.url).group(1)
+                item["arrcity"] = re.search(
+                    r"arrCityCode':%20'(\w{3})'", response.url).group(1)
+                item["depdate"] = re.findall(
+                    r'\d{4}-\d{2}-\d{2}', response.url)[0]
+                item["airlineInfo"] = urllib.parse.unquote(
+                    site["data"]["flightItems"][i]["flightInfo"][0]["airlineInfo"])
+                item["depAirportName"] = urllib.parse.unquote(
+                    site["data"]["flightItems"][i]["flightInfo"][0]["depAirportName"])
+                item["arrAirportName"] = urllib.parse.unquote(
+                    site["data"]["flightItems"][i]["flightInfo"][0]["arrAirportName"])
+                item["depTimeStr"] = site["data"]["flightItems"][i]["flightInfo"][0]["depTimeStr"]
+                item["arrTimeStr"] = site["data"]["flightItems"][i]["flightInfo"][0]["arrTimeStr"]
+                item["price"] = site["data"]["flightItems"][i]["cardTotalPrice"]/100
+                if item != {}:
+                    items.append(item)
+                item = {}
         # 打印一下item 校验
         # print(item)
-        if item != {}:
-            items.append(item)
+
         else:
-            print('{}没有你要找的航班'.format(re.findall(r'\d{4}-\d{2}-\d{2}',response.url)[0]))
+            print('{}没有你要找的航班'.format(re.findall(
+                r'\d{4}-\d{2}-\d{2}', response.url)[0]))
         return items
