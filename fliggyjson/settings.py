@@ -69,7 +69,8 @@ DEFAULT_REQUEST_HEADERS = {
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'fliggyjson.pipelines.FliggyjsonPipeline': 300,
+    #'fliggyjson.pipelines.FliggyjsonPipeline': 300,
+    'fliggyjson.pipelines.FliggyxlsxPipeline':310,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

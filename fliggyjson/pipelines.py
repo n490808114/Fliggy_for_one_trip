@@ -8,6 +8,7 @@
 import codecs
 import json
 import datetime
+from openpyxl import Workbook
 
 class FliggyjsonPipeline(object):
     def __init__(self):
@@ -17,5 +18,20 @@ class FliggyjsonPipeline(object):
         line = json.dumps(dict(item),ensure_ascii=False) + '\n'
         self.file.write(line)
         return item
-    def spider_close(self,spider):
+    def close_spider(self,spider):
         self.file.close()
+
+class FliggyxlsxPipeline(object):
+    def __init__(self):
+        self.wb = Workbook()
+        self.ws = self.wb.active
+        self.ws.append(['起飞城市','到达城市','起飞日期','航班信息','起飞机场','到达机场','起飞时间','到达时间','价格'])
+    def process_item(self, item, spider):
+        line = [item["depcity"],item["arrcity"],item["depdate"],item["airlineInfo"],item["depAirportName"],item["arrAirportName"],item["depTimeStr"],item["arrTimeStr"],item["price"]]
+        self.ws.append(line)
+        return item
+    def close_spider(self, spider):
+        filename = str(datetime.datetime.now()).split('.')[0].replace(':','_')
+        self.wb.save(f"{filename}.xlsx")
+
+    
