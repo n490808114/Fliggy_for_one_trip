@@ -7,6 +7,9 @@ import sys
 def getCookies():
     # chrome_options = Options()
     # chrome_options.add_argument("--headless")
+    chrome_options = webdriver.ChromeOptions()
+    prefs = {"profile.managed_default_content_settings.images": 2}
+    chrome_options.add_experimental_option("prefs", prefs)
     driver = webdriver.Chrome()
         #executable_path=r"C:\Program Files (x86)\Google\Chrome\Application\chromedriver",
 
@@ -66,11 +69,7 @@ def getCookies():
     #driver.get("https://i.taobao.com/my_taobao.htm")
     for elem in driver.get_cookies():
         cookies[elem['name']] = elem['value']
-    if len(cookies) > 0:
-        print("get Cookies Successful!!!")
-    else:
-        print("登陆失败")
-        sys.exit()
     driver.close()
     driver.quit()
     return cookies
+
