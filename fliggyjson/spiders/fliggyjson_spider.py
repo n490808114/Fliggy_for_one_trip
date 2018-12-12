@@ -17,12 +17,18 @@ class Fliggyjsonspider(scrapy.Spider):
     allow_url = ['fliggy.com']
 
     # 接收起飞城市，抵达城市，开始日期，天数
-    depCityCode = input("depCityCode?\n")
-    arrCityCode = input("arrCityCode?\n")
-    airlineCode = input("airlineCode?\n")
-    start_date = datetime.datetime.strptime(
-        input("please input scrapy start date\n"), '%Y-%m-%d')
-    times = int(input("how many days you want search?\n"))
+    depCityCode = input("起飞城市？\n")
+    arrCityCode = input("到达城市？\n")
+    airlineCode = input("航空公司代码？\n（如果不指定航空公司，将搜索所有的直飞航班）\n")
+    start_date = input("开始查询的日期？\n（如果不指定日期，将从今天查起）\n")
+    try:
+        if start_date == '':
+            start_date = datetime.datetime.now()
+        else:
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    except:
+        print("错误的日期，日期格式YYYY-MM-DD")
+    times = int(input("查询多少天？\n"))
 
     # 声明start_urls
     start_urls = []
@@ -90,10 +96,10 @@ class Fliggyjsonspider(scrapy.Spider):
         site4 = re.sub(r'false', r'"false"', site3)
         site = eval(site4)
         response_date = re.findall(
-                    r'\d{4}-\d{2}-\d{2}', response.url)[0]
+            r'\d{4}-\d{2}-\d{2}', response.url)[0]
         # 抓数据
         for i in range(len(site["data"]["flightItems"])):
-            if site["data"]["flightItems"][i]["flightInfo"][0]["airlineCodes"] == [self.airlineCode]:
+            if (len(site["data"]["flightItems"][i]["flightInfo"][0]["flightSegments"]) == 1) and ((site["data"]["flightItems"][i]["flightInfo"][0]["airlineCodes"] == [self.airlineCode]) if self.airlineCode != '' else True):
                 item["depcity"] = self.depCityCode
                 item["arrcity"] = self.arrCityCode
                 item["depdate"] = response_date
