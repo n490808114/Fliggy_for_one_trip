@@ -11,8 +11,6 @@ class Fliggyjsonspider(scrapy.Spider):
     name = 'fliggyjson'
     allow_url = ['fliggy.com']
 
-
-
     depCityCode = input("起飞城市？\n")
     arrCityCode = input("到达城市？\n")
     airlineCode = input("航空公司代码？\n（如果不指定航空公司，将搜索所有的直飞航班）\n")
