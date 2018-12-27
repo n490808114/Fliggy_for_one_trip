@@ -20,3 +20,13 @@ class FliggyjsonItem(scrapy.Item):
     depTimeStr = scrapy.Field()
     arrTimeStr = scrapy.Field()
     price = scrapy.Field()
+
+class FliggyOneWayDetailItem(scrapy.Item):
+    depcity = scrapy.Field()
+    arrcity = scrapy.Field()
+    airlineInfo = scrapy.Field()
+    depTimeStr = scrapy.Field()
+    arrTimeStr = scrapy.Field()
+    price = scrapy.Field()
+    soldby = scrapy.Field()
+
