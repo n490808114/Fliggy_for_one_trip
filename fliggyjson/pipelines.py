@@ -25,16 +25,14 @@ class FliggyxlsxPipeline(object):
     def __init__(self):
         self.wb = Workbook()
         self.ws = self.wb.active
-        self.ws.append(['起飞城市','到达城市','起飞日期','航班信息','起飞机场','到达机场','起飞时间','到达时间','价格'])
+        self.ws.append([' ',' ',' ',' ',' ',' ',' ',' ',' '])
     def process_item(self, item, spider):
-        if item["soldby"]:
-            line = [item["airlineInfo"],item["depcity"],item["arrcity"],item["depTimeStr"],item["arrTimeStr"],item["price"],item["soldby"],]
-        else:
-            line = [item["depcity"],item["arrcity"],item["depdate"],item["airlineInfo"],item["depAirportName"],item["arrAirportName"],item["depTimeStr"],item["arrTimeStr"],item["price"]]
+        line = []
+        for each in item.values():
+            line.append(each)
         self.ws.append(line)
         return item
     def close_spider(self, spider):
         filename = str(datetime.datetime.now()).split('.')[0].replace(':','_')
         self.wb.save(f"{filename}.xlsx")
 
-    

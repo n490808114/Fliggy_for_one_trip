@@ -50,9 +50,9 @@ def get_start_url_for_details(depCityCode,arrCityCode,start_date,search_for_each
             start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     except:
         print("错误的日期，日期格式YYYY-MM-DD")
-    
-    AirLineNo = input("请输入航空公司代码：\n").upper()
+
     FlightNo = input("请输入航班号：\n").upper()
+    AirLineNo = FlightNo[0:2]
     flightTime = input("请输入起飞时间，格式如下23:05\n")
     start_urls = []
     start_url_head = "https://sijipiao.fliggy.com/ie/flight_search_result_poller.do?"
