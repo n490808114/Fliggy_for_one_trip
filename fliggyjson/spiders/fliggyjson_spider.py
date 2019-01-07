@@ -1,5 +1,7 @@
 import scrapy
 import re  # re.search()
+import time
+import random
 import urllib.parse  # unicode strings to chinese
 from ..items import FliggyjsonItem,FliggyOneWayDetailItem
 from scrapy import Request
@@ -18,7 +20,7 @@ class Fliggyjsonspider(scrapy.Spider):
     start_date = input("开始查询的日期？\n（如果不指定日期，将从今天查起）\n")
     search_for_each_week = input("请输入航班周期:\n(周一请输入1，周二请输入2.......周日请输入7.\n如果不限制航班周期，什么都不要输入)")
     times = int(input("查询多少天？\n"))
-    
+
     choose = int(input("要查询单一航班需要更多信息。需要吗？（0代表不需要，1代表需要）"))
     if choose == 0:
         start_urls = get_start_urls(depCityCode,arrCityCode,start_date,search_for_each_week,times)
